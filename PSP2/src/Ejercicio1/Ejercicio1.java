@@ -1,22 +1,16 @@
 package Ejercicio1;
 
-public class Ejercicio1 extends Thread{
+public class Ejercicio1 extends Thread {
+	public void run() {
 
-    String palabra;
-    public Ejercicio1(String palabra){
-        this.palabra = palabra;
-    }
+			try {
+				System.out.println("Hola mundo + " + "id: " + Thread.currentThread().getId());
+				Thread.sleep(3000);
 
-    public void run(){
+			}catch (Exception e){
+				System.out.println("Hilo interrumpido");
+			}
 
-            System.out.println(palabra);
-
-        try {
-            // Pausa de 750 milisegundos entre cada impresión
-            Thread.sleep(750);
-        } catch (InterruptedException e) {
-            System.out.println("Hilo interrumpido");
-        }
-    }
-    }
+		}
+	}
 

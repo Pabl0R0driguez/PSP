@@ -5,10 +5,8 @@ public class Main {
 
         for (int i = 1; i <= 5; i++) {
 
-            Runnable hilo = new Hilo1_1("Hola mundo " + i);
-            Thread hilo2 = new Thread(hilo);
-
-            hilo2.start();
+            Runnable hilo = new Hilo1_1();
+            hilo.run();
 
         }
     }

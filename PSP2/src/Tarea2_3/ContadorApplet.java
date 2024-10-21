@@ -36,7 +36,8 @@ public class ContadorApplet extends Applet implements ActionListener {
 
     // Esta es mi clase interna para manejar el hilo del contador
     class HiloContador extends Thread {
-        private long contador; // Valor del contador
+		private boolean parar = false;
+		private long contador; // Valor del contador
 
         // Constructor que recibe el valor inicial
         public HiloContador(long valorInicial) {
@@ -44,7 +45,7 @@ public class ContadorApplet extends Applet implements ActionListener {
         }
 
         public void run() {
-            while (true) {
+            while (!parar) {
                 try {
                     Thread.sleep(400); // Esperar 400 ms
                     contador++; // Incrementar el contador
@@ -56,7 +57,7 @@ public class ContadorApplet extends Applet implements ActionListener {
         }
 
         public void pararHilo() {
-            stop(); // Detener el hilo
+            parar = true;
         }
 
         // Metodo que devuelve el valor actual del contador
