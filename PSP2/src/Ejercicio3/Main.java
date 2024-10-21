@@ -6,8 +6,15 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Main {
+	private static long t_comienzo;
+	private static long t_final;
+
+	//Secuencial, un único hilo
 	public static void main(String[] args) throws IOException {
 		{
+			//Inicio del proceso
+			t_comienzo = System.currentTimeMillis();
+
 
 			int contador = 0;
 			for (int i = 0; i < args.length; i++) {
@@ -28,6 +35,10 @@ public class Main {
 				System.out.println("El fichero " + args[i] + " tiene " + contador + " caracteres");
 				System.out.println("Reseteamos el contador");
 				contador = 0;
+
+				t_final = System.currentTimeMillis();
+
+				System.out.println("El proceso ha tardado: " + (t_final - t_comienzo) + " milisengundos");
 			}
 
 			}
