@@ -1,55 +1,45 @@
 package Actividad4_1;
 
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-
 import java.io.IOException;
-import java.net.SocketException;
 
 public class ClietneFTP2 {
     public static void main(String[] args) {
         FTPClient cliente = new FTPClient();
-        String servFTP = "ftp.rediris.es";
-        System.out.println("Nos conoctamos a: " + servFTP);
-        String usuario = "admin";
-        String contraseña = "admin";
-
+        String server = "127.0.0.1";
+        String user = "usuario";
+        String pass = "usuario";
 
         try {
-            cliente.connect(servFTP);
-            cliente.enterLocalPassiveMode(); // Modo pasivo
+            // Conectar al servidor
+            cliente.connect(server);
+            System.out.println("Conectado a: " + server);
 
-            boolean login = cliente.login(usuario, contraseña);
-            if (login) {
-                System.out.println("Login correctamente");
-            } else {
-                System.out.println("Login incorrectamente");
-                cliente.disconnect();
-                System.out.println(1);
-            }
-            System.out.println("Directorio actual es: " + cliente.printWorkingDirectory());
-            FTPFile[] files = cliente.listFiles();
-            System.out.println("Lista de ficheros: " + files.length);
-
-            // Array para visualizar el tipo de fichero
-            String tipos[] = {"Fichero", "Directorio ", "Enlace simb."};
-            for (int i = 0; i < files.length; i++) {
-                System.out.println("\t" + files[i].getName() + " - " + " =>" + tipos[files[i].getType()]);
-            }
-            boolean logout = cliente.logout();
-            if (logout) {
-                System.out.println("Logout correctamente");
-            } else {
-                System.out.println("Logout incorrectamente");
+            // Intentar iniciar sesión
+            boolean login = cliente.login(user, pass);
+            if (!login) {
+                System.out.println("Login incorrecto");
+                return; // Salir si el login falla
             }
 
-            //
-            cliente.disconnect();
+            // Obtener y mostrar el directorio de trabajo
+            String workingDirectory = cliente.printWorkingDirectory();
+            System.out.println("Directorio de trabajo: " + workingDirectory);
 
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            // Realiza otras operaciones, como listar archivos o subir archivos...
+
+        } catch (IOException ex) {
+            ex.printStackTrace(); // Mostrar el error si ocurre
+        } finally {
+            try {
+                // Cerrar la conexión
+                if (cliente.isConnected()) {
+                    cliente.logout();
+                    cliente.disconnect();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

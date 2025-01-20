@@ -50,7 +50,7 @@ public class SubirFichero {
 
             try {
                 statusLabel.setText("Conectando...");
-                cliente.connect(server); // Conectar al servidor
+                cliente.connect(server,21); // Conectar al servidor
                 cliente.execAUTH("TLS"); // Autenticar con TLS
                 cliente.enterLocalPassiveMode(); // Modo pasivo
 
