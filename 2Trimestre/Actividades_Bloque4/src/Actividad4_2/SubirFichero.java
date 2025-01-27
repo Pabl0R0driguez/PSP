@@ -1,124 +1,87 @@
 package Actividad4_2;
 
-import org.apache.commons.net.ftp.FTPSClient;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 
 import javax.swing.*;
-import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class SubirFichero {
-    private static FTPSClient cliente = new FTPSClient("TLS"); // Especificar el protocolo TLS
 
     public static void main(String[] args) {
-        // Crear interfaz gráfica
-        JFrame frame = new JFrame("Cliente FTPS");
-        frame.setSize(400, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new GridLayout(6, 1));
+        // Configuración del servidor FTP
+        String server = "localhost"; // Dirección del servidor FTP (en tu caso, localhost)
+        int port = 21; // Puerto por defecto para FTP
+        String user = "uno"; // Usuario configurado en el servidor FTP
+        String password = "uno"; // Contraseña configurada para el usuario "uno"
+        String remoteDirectory = "/home/usuario"; // Ruta en el servidor FTP donde quieres subir el archivo
 
-        // Etiqueta de estado
-        JLabel statusLabel = new JLabel("Estado: Sin conexión", SwingConstants.CENTER);
-        frame.add(statusLabel);
+        // Crear JFileChooser para seleccionar el archivo
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Selecciona un fichero para subir al servidor FTP");
+        int result = fileChooser.showOpenDialog(null);
 
-        // Campo para servidor
-        JTextField serverField = new JTextField("localhost");
-        frame.add(new JLabel("Servidor:"));
-        frame.add(serverField);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
 
-        // Campo para usuario y contraseña
-        JTextField userField = new JTextField("usuario");
-        JPasswordField passField = new JPasswordField("usuario");
-        frame.add(new JLabel("Usuario:"));
-        frame.add(userField);
-        frame.add(new JLabel("Contraseña:"));
-        frame.add(passField);
-
-        // Botón para conectar
-        JButton connectButton = new JButton("Conectar");
-        frame.add(connectButton);
-
-        // Botón para seleccionar archivo
-        JButton uploadButton = new JButton("Subir Archivo");
-        uploadButton.setEnabled(false);
-        frame.add(uploadButton);
-
-        // Acción del botón de conexión
-        connectButton.addActionListener(e -> {
-            String server = serverField.getText();
-            String user = userField.getText();
-            String pass = new String(passField.getPassword());
-
+            // Conexión al servidor FTP
+            FTPClient ftpClient = new FTPClient();
             try {
-                statusLabel.setText("Conectando...");
-                cliente.connect(server,21); // Conectar al servidor
-                cliente.execAUTH("TLS"); // Autenticar con TLS
-                cliente.enterLocalPassiveMode(); // Modo pasivo
-
-                // Configurar el cliente para usar PROT P
-                cliente.execPROT("P"); // Cambiar a PROT P
-
-                boolean login = cliente.login(user, pass);
+                ftpClient.connect(server, port);
+                boolean login = ftpClient.login(user, password);
 
                 if (login) {
-                    statusLabel.setText("Conectado a " + server);
-                    uploadButton.setEnabled(true);
-                } else {
-                    statusLabel.setText("Error: Usuario o contraseña incorrectos");
-                }
-            } catch (IOException ex) {
-                statusLabel.setText("Error de conexión: " + ex.getMessage());
-            }
-        });
+                    ftpClient.enterLocalPassiveMode(); // Establecer modo pasivo
+                    ftpClient.setFileType(FTP.BINARY_FILE_TYPE); // Configurar el tipo de archivo (binario)
 
-        // Acción del botón de subida
-        uploadButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            int result = fileChooser.showOpenDialog(frame);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                try (InputStream inputStream = new FileInputStream(selectedFile)) {
-                    boolean success = cliente.storeFile(selectedFile.getName(), inputStream);
-                    if (success) {
-                        JOptionPane.showMessageDialog(frame, "Archivo subido con éxito: " + selectedFile.getName());
-                        listarDirectorio();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Error al subir el archivo.");
+                    // Cambiar al directorio remoto
+                    if (!ftpClient.changeWorkingDirectory(remoteDirectory)) {
+                        // Si no existe el directorio, crear uno
+                        if (ftpClient.makeDirectory(remoteDirectory)) {
+                            ftpClient.changeWorkingDirectory(remoteDirectory);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error al acceder o crear el directorio.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+
+                    // Subir el archivo seleccionado
+                    String remoteFile = selectedFile.getName(); // El nombre del archivo remoto será el mismo que el archivo local
+                    try (FileInputStream inputStream = new FileInputStream(selectedFile)) {
+                        boolean done = ftpClient.storeFile(remoteFile, inputStream); // Subir el archivo
+                        if (done) {
+                            JOptionPane.showMessageDialog(null, remoteFile + " se subió correctamente.");
+
+                            // Listar el contenido del directorio actual del servidor FTP
+                            System.out.println("Contenido del directorio actual en el servidor FTP:");
+                            for (String file : ftpClient.listNames()) {
+                                System.out.println(file);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error al subir el archivo.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se pudo iniciar sesión en el servidor FTP.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                ftpClient.logout(); // Cerrar sesión después de la carga
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Error de conexión: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            } finally {
+                try {
+                    if (ftpClient.isConnected()) {
+                        ftpClient.disconnect(); // Desconectar al finalizar
                     }
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage());
+                    ex.printStackTrace();
                 }
             }
-        });
-
-        // Mostrar la interfaz
-        frame.setVisible(true);
-    }
-
-    // Método para listar el contenido del directorio raíz
-    private static void listarDirectorio() {
-        try {
-            String[] archivos = cliente.listNames();
-            if (archivos != null && archivos.length > 0) {
-                System.out.println("Contenido del directorio raíz:");
-                for (String archivo : archivos) {
-                    System.out.println(archivo);
-                }
-            } else {
-                System.out.println("El directorio está vacío.");
-            }
-        } catch (IOException e) {
-            System.out.println("Error al listar el directorio: " + e.getMessage());
-        }
-    }
-
-    private static void cerrarConexion() {
-        if (cliente.isConnected()) {
-            try {
-                cliente.logout();
-                cliente.disconnect();
-            } catch (IOException e) {
-                System.out.println("Error al cerrar la conexión: " + e.getMessage());
-            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se seleccionó ningún archivo.");
         }
     }
 }
