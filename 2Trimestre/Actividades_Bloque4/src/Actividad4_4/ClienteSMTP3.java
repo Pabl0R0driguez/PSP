@@ -8,22 +8,28 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Scanner;
 
 public class ClienteSMTP3 {
     public static void main(String[] args) {
         // Crear cliente SMTP seguro
         AuthenticatingSMTPClient client = new AuthenticatingSMTPClient();
+        Scanner scanner = new Scanner(System.in);
 
-        // Datos del usuario y del servidor
-        String server = "smtp.gmail.com";
-        String username = "tu_correo@gmail.com"; // Cambia por tu correo
-        String password = "contraseña_de_aplicacion"; // Usa contraseña de aplicación
-        int puerto = 587;
-        String remitente = "tu_correo@gmail.com"; // Cambia por tu correo
+        // Pedir datos del usuario y del servidor
+        System.out.print("Introduce el servidor SMTP: ");
+        String server = scanner.nextLine();
+        System.out.print("Introduce el nombre de usuario (correo): ");
+        String username = scanner.nextLine();
+        System.out.print("Introduce la contraseña de aplicación: ");
+        String password = scanner.nextLine();
+        System.out.print("Introduce el puerto (por defecto 587): ");
+        int puerto = Integer.parseInt(scanner.nextLine());
+        System.out.print("Introduce el remitente (correo): ");
+        String remitente = scanner.nextLine();
 
         try {
             int respuesta;
-
             // Conectar al servidor SMTP
             client.connect(server, puerto);
             System.out.println("1 - " + client.getReplyString());
@@ -54,10 +60,14 @@ public class ClienteSMTP3 {
                     System.out.println("4 - " + client.getReplyString());
 
                     // Enviar mensaje
-                    String destino1 = "destino@gmail.com"; // Cambia por el destino
-                    String mensaje = "Este es un correo de prueba.\nSaludos.";
+                    System.out.print("Introduce el destinatario: ");
+                    String destino1 = scanner.nextLine();
+                    System.out.print("Introduce el asunto: ");
+                    String asunto = scanner.nextLine();
+                    System.out.print("Introduce el mensaje: ");
+                    String mensaje = scanner.nextLine();
 
-                    SimpleSMTPHeader cabecera = new SimpleSMTPHeader(remitente, destino1, "Asunto: Prueba SMTP");
+                    SimpleSMTPHeader cabecera = new SimpleSMTPHeader(remitente, destino1, "Asunto: " + asunto);
                     client.setSender(remitente);
                     client.addRecipient(destino1);
                     System.out.println("5 - " + client.getReplyString());
