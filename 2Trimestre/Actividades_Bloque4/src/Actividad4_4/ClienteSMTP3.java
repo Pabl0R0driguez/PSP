@@ -28,6 +28,8 @@ public class ClienteSMTP3 {
         System.out.print("Introduce el remitente (correo): ");
         String remitente = scanner.nextLine();
 
+       // hdpqardxqdojlniw
+
         try {
             int respuesta;
             // Conectar al servidor SMTP

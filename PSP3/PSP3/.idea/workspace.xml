@@ -5,16 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="92252f06-fc85-4d87-8a5c-63135880f132" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_1/ClienteFTP2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/ActividadesBloque4/.idea/ActividadesBloque4.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/ActividadesBloque4/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/ActividadesBloque4/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/ActividadesBloque4/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/ActividadesBloque4/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_1/ClienteFTP1.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_1/ClienteFTP1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_1/ClietneFTP2.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_2/SubirFichero.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_2/SubirFichero.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_3/ClienteFTP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../2Trimestre/Actividades_Bloque4/src/Actividad4_3/ClienteFTP.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

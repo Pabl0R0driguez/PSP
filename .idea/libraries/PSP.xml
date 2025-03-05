@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="PSP">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/commons-net-3.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/PSPu3.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

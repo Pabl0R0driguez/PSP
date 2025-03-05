@@ -1,18 +1,18 @@
 package Actividad4_5;
-import java.io.BufferedReader;
-import java.io.IOException;
-
 
 import org.apache.commons.net.pop3.POP3MessageInfo;
 import org.apache.commons.net.pop3.POP3SClient;
 
-public class EjemploPOP3GMAIL {
+import java.io.BufferedReader;
+import java.io.IOException;
+
+public class EjemploPOP3GMAIL2P {
 	public static void main(String[] args) throws  IOException  {
 
 		String server = "pop.gmail.com",
-				username = "pablorodseg@gmail.com",
-				password = "mffsqipzpmfeylzg\n";
-				int puerto = 995;
+		username = "pablorodseg@gmail.com",
+		password = "hdpqardxqdojlniw\n";
+		int puerto = 995;
 
 		try {
 			
