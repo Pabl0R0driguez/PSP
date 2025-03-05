@@ -1,39 +1,69 @@
 package Ejercicio5_4;
 
-import java.io.BufferedReader;
+import javax.net.ssl.*;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
-        final String DIRECCION_SERVIDOR = "127.0.0.1"; // Especifico la dirección IP del servidor
-        final int PUERTO_SERVIDOR = 5000; // Establezco el puerto donde el servidor estará esperando conexiones
+        String host = "127.0.0.1"; // Asegúrate de que esto sea correcto
+        int puerto = 1111; // Asegúrate de que este puerto coincida con el del servidor
 
-        try (Socket conexion = new Socket(DIRECCION_SERVIDOR, PUERTO_SERVIDOR)) { // Intento establecer una conexión con el servidor
-            System.out.println("Conexión con el servidor establecida.");
+        try {
+            // Definimos el fichero almacén que contendrá el certificado y clave para acceder
+            FileInputStream ficAlmacen = new FileInputStream("/home/pablo/keystore/Servidor.jks");
+            String clave = "123456";
 
-            // Se configuran los flujos de entrada y salida para la comunicación
-            PrintWriter flujoSalida = new PrintWriter(conexion.getOutputStream(), true);
-            BufferedReader flujoEntrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+            // Cargar en un KeyStore el almacén que contiene el certificado
+            KeyStore almacen = KeyStore.getInstance(KeyStore.getDefaultType());
+            almacen.load(ficAlmacen, clave.toCharArray());
 
-            // Solicito al usuario que ingrese un número
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Por favor, ingresa un número entero: ");
-            int numero = scanner.nextInt(); // Leo el número entero proporcionado por el usuario
+            // Creamos el gestor de claves a partir del objeto KeyStore e inicializarlo con la clave del almacén
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(almacen);
 
-            // Envío el número al servidor
-            System.out.println("Enviando número al servidor: " + numero);
-            flujoSalida.println(numero);
+            // Creación del contexto con soporte TLS
+            SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, tmf.getTrustManagers(), null);
 
-            // Leo la respuesta del servidor (el cuadrado del número)
-            String respuestaServidor = flujoEntrada.readLine();
-            System.out.println("Respuesta del servidor (cuadrado del número): " + respuestaServidor);
+            // Creación del socket SSL de cliente a partir del contexto
+            SSLSocketFactory sfact = context.getSocketFactory();
+            SSLSocket socket = (SSLSocket) sfact.createSocket(host, puerto);
+            System.out.println("Conectado al servidor en " + host + ":" + puerto);
 
-        } catch (IOException error) { // Si ocurre un error durante la conexión o comunicación
-            System.out.println("Se ha producido un error en el cliente: " + error.getMessage());
+            // Entrada y salida de objetos
+            ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
+            Scanner sc = new Scanner(System.in);
+
+            System.out.println("Introduce un número mayor que 0: ");
+            int numero = sc.nextInt();
+
+            // Enviamos el objeto Numeros al servidor
+            Numeros numeros = new Numeros(numero);
+            salida.writeObject(numeros);
+
+            // Si el número es mayor que 0
+            if (numero > 0) {
+                Numeros devuelve = (Numeros) entrada.readObject();
+                System.out.println("Resultados recibidos del servidor:");
+                System.out.println("Número: " + devuelve.getNumero());
+                System.out.println("Cuadrado: " + devuelve.getCuadrado());
+                System.out.println("Cubo: " + devuelve.getCubo());
+            } else {
+                System.out.println("El número debe ser mayor que 0");
+            }
+
+            socket.close(); // Cerrar el socket después de usarlo
+
+        } catch (IOException | ClassNotFoundException | KeyStoreException | CertificateException |
+                 NoSuchAlgorithmException | KeyManagementException e) {
+            e.printStackTrace();
         }
     }
 }

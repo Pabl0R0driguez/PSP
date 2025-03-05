@@ -2,30 +2,26 @@ package Ejercicio5_5;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
 
 public class Main {
-    public static void main(String[] args) {
-        // Crear el módulo de login
-        ACT5_5 loginModule = new ACT5_5();
+    public static void main(String[] args) throws LoginException {
 
-        // Crear el Subject (aunque aquí no se usa mucho)
+        ACT5_5 login = new ACT5_5();
+
+        // Creamos Subject que representa al usuario
         Subject subject = new Subject();
+        // Creamos el CallbackHandler para obtener nombre y contraseña
+        CallbackHandler callbackHandler = new MyCallbackHandler();
+        // Inicializar la clase de login
+        login.initialize(subject, callbackHandler, null, null);
 
-        // Crear el CallbackHandler
-        CallbackHandler handler = new MiCallbackHandler();
-
-        // Inicializar el módulo de login
-        loginModule.initialize(subject, handler, null, null);
-
-        try {
-            // Intentar el login
-            if (loginModule.login()) {
+            // Hacemos login
+            if (login.login()) {
                 System.out.println("Autenticación exitosa");
             } else {
                 System.out.println("Autenticación fallida");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 }

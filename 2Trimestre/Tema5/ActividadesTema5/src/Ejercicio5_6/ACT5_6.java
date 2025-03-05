@@ -1,12 +1,15 @@
-package Ejercicio5_5;
+package Ejercicio5_6;
 
 import javax.security.auth.Subject;
-import javax.security.auth.callback.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.util.Map;
 
-public class ACT5_5 implements LoginModule {
+public class ACT5_6 implements LoginModule {
     private Subject subject;
     private CallbackHandler callbackHandler;
 
